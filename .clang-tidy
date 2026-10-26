@@ -1,0 +1,101 @@
+# Static analysis for first-party C++, taken from Gamegine. clang-format is
+# the other half.
+#
+#   clang-tidy -p . main.cpp
+#
+# Checks are chosen to catch defects, not to enforce taste. A check that
+# fires on correct, idiomatic code in this codebase is disabled below with
+# the reason, because a noisy analyser gets switched off and an analyser that
+# is switched off catches nothing.
+
+Checks: >
+  bugprone-*,
+  cert-*,
+  concurrency-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -bugprone-easily-swappable-parameters,
+  -misc-include-cleaner,
+  -misc-no-recursion,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -readability-braces-around-statements,
+  -readability-redundant-inline-specifier,
+  -readability-avoid-nested-conditional-operator,
+  -cert-dcl21-cpp,
+  -performance-enum-size,
+  -readability-avoid-const-params-in-decls,
+  -readability-uppercase-literal-suffix,
+  -readability-redundant-lambda-parameter-list,
+  readability-identifier-naming
+
+# Notes on the exclusions above, in order:
+#
+#   easily-swappable-parameters   Error::make(kind, reason, context) has
+#                                 adjacent parameters of related types by
+#                                 design; the type system already rejects a
+#                                 reason from the wrong domain.
+#   include-cleaner               Wants every transitively-used header named
+#                                 directly. Reasonable in principle, but it
+#                                 fights the BDE convention of grouping
+#                                 includes by package with hand-written
+#                                 comment headers.
+#   identifier-length             BDE uses short, conventional names: 'd_' for
+#                                 members, 't_' for template parameters.
+#   magic-numbers                 Bit masks and shifts in a packed value are
+#                                 clearer as literals beside the layout
+#                                 comment than as named constants elsewhere.
+#   braces-around-statements      Already settled by .clang-format.
+#   redundant-inline-specifier    BDE writes 'inline' on out-of-class inline
+#                                 definitions deliberately, as documentation.
+#   performance-enum-size         Actively wrong here. The reason enums MUST
+#                                 have a uint16_t underlying type: the
+#                                 ErrorReasonType concept requires it, and the
+#                                 packed layout allocates them 16 bits.
+#                                 Shrinking to uint8_t would break both.
+#   avoid-const-params-in-decls   True, but the project writes 'const' on
+#                                 parameters in declarations as documentation
+#                                 of intent, consistently.
+#   uppercase-literal-suffix      Taste. Note that 'bugprone-signed-bitwise'
+#                                 stays on and catches the case that actually
+#                                 matters: an unsuffixed literal used as a
+#                                 shift operand is signed.
+#   redundant-lambda-parameter-*  C++23 permits '[] -> T {}', but empty parens
+#                                 in a lambda are near-universal convention
+#                                 and read better.
+
+# The project's naming convention, enforced rather than remembered:
+#
+#   functions        camelCase         createInstance()
+#   types            CamelCase         Error, ErrorReasonTraits, Domain
+#   enumerators      e_                e_VULKAN
+#   private members  d_                d_raw
+#   class constants  k_                k_DOMAIN
+#   template params  t_                t_REASON
+#
+# Constructors are exempt by definition: they carry the type's name.
+#
+# The 'k_' prefix is scoped to CLASS and GLOBAL constants deliberately.
+# ConstexprVariablePrefix would also catch ordinary locals -- a 'constexpr
+# Error error' inside a test is not a named constant and should not wear the
+# prefix of one.
+CheckOptions:
+  readability-identifier-naming.FunctionCase: camelBack
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.TypeAliasCase: CamelCase
+  readability-identifier-naming.EnumConstantPrefix: e_
+  readability-identifier-naming.PrivateMemberPrefix: d_
+  readability-identifier-naming.ClassConstantPrefix: k_
+  readability-identifier-naming.GlobalConstantPrefix: k_
+  readability-identifier-naming.TemplateParameterPrefix: t_
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: '.*'
+
+FormatStyle: file

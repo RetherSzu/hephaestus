@@ -1,0 +1,17 @@
+# xmake build output & cache
+build/
+.xmake/
+
+# Generated compilation database
+compile_commands.json
+
+# Compiled shaders, built from shaders/*.slang
+*.spv
+*.air
+*.metallib
+
+# IDE
+.idea/
+
+# macOS
+.DS_Store

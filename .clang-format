@@ -1,0 +1,105 @@
+# BDE style, taken from Gamegine: 79-column lines, 4-space indent, access
+# specifiers outdented by two, and include blocks grouped by package with a
+# hand-written comment header.
+#
+#   clang-format --dry-run -Werror main.cpp  # report formatting issues
+#   clang-format -i main.cpp                 # rewrite in place
+
+Language: Cpp
+BasedOnStyle: LLVM
+# 'Latest' rather than a specific standard. clang-format rejects the WHOLE
+# config on one unknown value and silently falls back to LLVM defaults, so a
+# value only the newest release understands disables the project style for
+# anyone on an older one. Apple's clangd -- the formatter in the editor -- is
+# LLVM 21 and does not know 'c++23'. 'Latest' has been valid for years and
+# needs no revisiting when C++26 lands.
+Standard: Latest
+
+ColumnLimit: 79
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+AccessModifierOffset: -2
+
+# 'ContextProtocol* window', not 'ContextProtocol *window'.
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+
+NamespaceIndentation: None
+FixNamespaceComments: false
+IndentCaseLabels: false
+IndentPPDirectives: None
+
+# A function *definition* opens its brace on the next line; everything else
+# (namespace, class, switch, if) attaches it. This is the BDE shape.
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterClass: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterEnum: false
+  AfterNamespace: false
+  AfterExternBlock: false
+  AfterControlStatement: Never
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeWhile: false
+  BeforeLambdaBody: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+# 'case BufferUsage::Vertex: return vk::...;' stays on one line, as in the
+# old vlk_* translation units.
+AllowShortCaseLabelsOnASingleLine: true
+
+# Constructor initialisers go one per line with a leading comma, flush at the
+# function's own indent -- the BDE ':' / ',' ladder.
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 0
+PackConstructorInitializers: Never
+
+# Neither a call's arguments nor a declaration's parameters are packed: if
+# they do not all fit on one line, each goes on its own line.
+BinPackArguments: false
+BinPackParameters: false
+
+# Keep the callee attached to its assignment: 'x = f(' rather than breaking
+# after '=' and re-indenting the whole call.
+PenaltyBreakAssignment: 150
+
+# Wrapping the parameter list is preferred over putting the return type on
+# its own line; the return type moves only when alignment genuinely cannot
+# fit inside 79 columns, which is exactly what the old headers did.
+PenaltyReturnTypeOnItsOwnLine: 60
+# ...but breaking straight after the open parenthesis is worse still, so a
+# signature that cannot align its parameters moves the return type up rather
+# than dumping the whole list onto the next line.
+PenaltyBreakOpenParenthesis: 100
+PenaltyBreakBeforeFirstCallParameter: 500
+AlwaysBreakAfterReturnType: None
+
+AlignAfterOpenBracket: Align
+# The old sources column-align runs of member declarations and their
+# initialisers ('double   d_elapsedTime = 0.0;'), per block, not across
+# blank lines.
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 2
+SpaceAfterCStyleCast: false
+
+# Include order is expressed by hand with '// std', '// core', '// rhi'
+# comment headers, so clang-format must not reshuffle the blocks.
+SortIncludes: false
+IncludeBlocks: Preserve
+
+SeparateDefinitionBlocks: Leave
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 2
