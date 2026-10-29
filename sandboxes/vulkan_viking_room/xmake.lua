@@ -14,7 +14,7 @@ set_languages("cxx23")
 -- xmake writes them as '-I', and clang-tidy then reports their code as
 -- findings in ours. clangd reads '-isystem'.
 add_rules("plugin.compile_commands.autoupdate",
-          {outputdir = ".", lsp = "clangd"})
+          {outputdir = ".", lsp = not is_host("windows") and "clangd" or nil})
 
 add_rules("mode.debug", "mode.release")
 
@@ -145,7 +145,7 @@ add_requires("tinyobjloader")
 -- whether built standalone or from the root umbrella project.
 local assets_root = path.absolute(path.join(os.scriptdir(), "..", ".."))
 
-target("viking-room-vulkan")
+target("vlk")
     set_kind("binary")
 
     add_rules("vulkan.warnings", "vulkan.werror", "vulkan.no_exceptions")

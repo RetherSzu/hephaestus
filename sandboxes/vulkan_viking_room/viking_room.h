@@ -1,11 +1,10 @@
-// viking_room.h -*-C++-*-
+// viking_room.h                                                      -*-C++-*-
 #ifndef INCLUDED_VKR_VIKING_ROOM_H
 #define INCLUDED_VKR_VIKING_ROOM_H
 
 // std
 #include <array>
 #include <cstddef>
-#include <cstdint>
 #include <vector>
 
 // third party
@@ -62,11 +61,7 @@ struct Vertex {
         };
     }
 
-    bool operator==(const Vertex& other) const
-    {
-        return pos == other.pos && color == other.color &&
-               texCoord == other.texCoord;
-    }
+    friend bool operator==(const Vertex&, const Vertex&) = default;
 };
 
 class VikingRoom {

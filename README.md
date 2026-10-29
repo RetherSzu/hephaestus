@@ -42,9 +42,10 @@ All other dependencies — GLFW, GLM, stb, tinyobjloader, `vulkansdk` — are re
 From the repository root:
 
 ```sh
-xmake                          # build every target
-xmake build viking-room-vulkan # build one target
-xmake run   viking-room-vulkan # build and run the Vulkan sandbox
+xmake            # build every target
+xmake build vlk  # build one target
+xmake run   vlk  # build and run the Vulkan sandbox
+xmake run   dx12 # build and run the DirectX 12 sandbox
 ```
 
 Switch build mode with `xmake f -m debug` or `xmake f -m release`.

@@ -1,7 +1,7 @@
 struct VSInput {
-    float3 inPosition;
-    float3 inColor;
-    float2 inTexCoord;
+    float3 inPosition : POSITION;
+    float3 inColor : COLOR;
+    float2 inTexCoord : TEXCOORD0;
 };
 
 struct UniformBuffer {
@@ -18,8 +18,8 @@ Sampler2D textureSampler;
 struct VSOutput
 {
     float4 pos : SV_Position;
-    float3 color;
-    float2 fragTexCoord;
+    float3 color : COLOR;
+    float2 fragTexCoord : TEXCOORD0;
 };
 
 [shader("vertex")]

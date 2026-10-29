@@ -111,7 +111,10 @@ rule_end()
 -- metal/cpp). The package defines 'MTL_PRIVATE_IMPLEMENTATION' and its
 -- siblings for every translation unit, so 'main.cpp' undefines them to keep
 -- 'viking_room.cpp' the single implementation TU (see the comment there).
-add_requires("metal-cpp")
+-- The package exists for Apple platforms only.
+if is_plat("macosx") then
+    add_requires("metal-cpp")
+end
 
 -- Window creation (https://www.glfw.org). GLFW makes only a plain Cocoa
 -- window; 'metal_layer.mm' attaches the CAMetalLayer that Metal draws into.
@@ -140,8 +143,11 @@ add_requires("tinyobjloader")
 -- whether built standalone or from the root umbrella project.
 local assets_root = path.absolute(path.join(os.scriptdir(), "..", ".."))
 
-target("viking-room-metal")
+target("mtl")
     set_kind("binary")
+
+    -- Metal exists only on Apple platforms; elsewhere the target is skipped.
+    set_enabled(is_plat("macosx"))
 
     add_rules("metal.warnings", "metal.werror", "metal.no_exceptions")
 
@@ -180,9 +186,4 @@ target("viking-room-metal")
     if is_plat("macosx") then
         add_frameworks("Metal", "Foundation", "QuartzCore", "CoreGraphics",
                        "AppKit", "Cocoa", "IOKit", "CoreVideo")
-    else
-        -- Metal is available on Apple platforms only.
-        on_load(function (target)
-            raise("viking-room-metal targets macOS; Metal is Apple-only.")
-        end)
     end

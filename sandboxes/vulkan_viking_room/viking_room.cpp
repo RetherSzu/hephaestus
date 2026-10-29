@@ -190,13 +190,14 @@ vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& caps,
 
 std::vector<char> readFile(const std::string& filename)
 {
-    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    std::ifstream file(filename, std::ios::binary);
 
     if (!file.is_open()) {
         std::cout << "failed to open file!\n";
         return {};
     }
 
+    file.seekg(0, std::ios::end);
     const auto        fileSize = static_cast<std::size_t>(file.tellg());
     std::vector<char> buffer(fileSize);
     file.seekg(0, std::ios::beg);

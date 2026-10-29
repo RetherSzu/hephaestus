@@ -6,10 +6,11 @@
 -- This file ties the whole repository together so every target can be built
 -- and run from the root, e.g.
 --
---   xmake                          -- build every target
---   xmake build viking-room-vulkan -- build one target
---   xmake run   viking-room-vulkan -- build and run the Vulkan sandbox
---   xmake run   viking-room-metal  -- build and run the Metal sandbox
+--   xmake            -- build every target
+--   xmake build vlk  -- build one target
+--   xmake run   vlk  -- build and run the Vulkan sandbox
+--   xmake run   mtl  -- build and run the Metal sandbox
+--   xmake run   dx12 -- build and run the DirectX 12 sandbox
 --
 -- Each sandbox keeps its own self-contained 'xmake.lua' (packages, compiler
 -- flags, shader compilation, target definition) and stays buildable on its
@@ -32,13 +33,17 @@ add_rules("mode.debug", "mode.release")
 -- 'lsp = "clangd"' keeps third-party headers as '-isystem' (not '-I') so
 -- clang-tidy does not lint their code as ours. Each sandbox keeps its own
 -- autoupdate rule too, for when it is opened or built on its own.
-add_rules("plugin.compile_commands.autoupdate", {outputdir = ".", lsp = "clangd"})
+-- Not on Windows: there CLion probes the real 'cl.exe' with these flags, and
+-- the clangd flavor adds clang-cl-only '-imsvc' that 'cl.exe' rejects.
+add_rules("plugin.compile_commands.autoupdate",
+          {outputdir = ".", lsp = not is_host("windows") and "clangd" or nil})
 
 -- =============================================================================
 -- Sub-projects
 
 -- Learning sandboxes: isolated single-backend loaders.
 includes("sandboxes/vulkan_viking_room")
+includes("sandboxes/dx12_viking_room")
 includes("sandboxes/metal_viking_room")
 
 -- The final, refactored application that will sit on top of the RHI.
