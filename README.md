@@ -33,6 +33,7 @@ those target definitions into a single project.
 - A C++23 toolchain
 - [Slang](https://github.com/shader-slang/slang) (`slangc`) to compile shaders
 - The Vulkan SDK (for the Vulkan sandbox)
+- Windows with the DirectX 12 toolchain (for the DirectX 12 sandbox)
 - macOS with the Metal toolchain (for the Metal sandbox)
 
 All other dependencies — GLFW, GLM, stb, tinyobjloader, `vulkansdk` — are resolved automatically by xmake.
@@ -46,6 +47,7 @@ xmake            # build every target
 xmake build vlk  # build one target
 xmake run   vlk  # build and run the Vulkan sandbox
 xmake run   dx12 # build and run the DirectX 12 sandbox
+xmake run   mtl # build and run the Metal sandbox
 ```
 
 Switch build mode with `xmake f -m debug` or `xmake f -m release`.
